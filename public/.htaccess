@@ -1,0 +1,41 @@
+# Hostinger / Apache / LiteSpeed configuration for TanStack Start / Vite
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # 1. Directly serve real files and directories (JS bundles, CSS, images, etc.)
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # 2. Prevent rewriting missing asset files to HTML (prevents MIME type mismatch errors)
+  RewriteRule ^assets/.*$ - [R=404,L]
+
+  # 3. Proxy or rewrite remaining requests to index.html or Node server
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Enforce correct MIME types for ES modules and modern assets
+<IfModule mod_mime.c>
+  AddType application/javascript .js .mjs
+  AddType text/css .css
+  AddType image/webp .webp
+  AddType image/svg+xml .svg
+  AddType application/json .json
+</IfModule>
+
+# Enable Gzip compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/javascript application/json text/css text/html text/plain text/xml
+</IfModule>
+
+# Cache static assets for performance
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>
