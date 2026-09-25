@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, X, Phone, User, LogOut, Inbox, ChevronDown, HardHat, Search } from "lucide-react";
+import { Menu, X, Phone, User, LogOut, Inbox, ChevronDown, HardHat, Search, History } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { useCustomerAuth, signOutCustomer } from "@/lib/customer-auth";
 import { CustomerAuthDialog } from "@/components/site/CustomerAuthDialog";
@@ -149,25 +149,41 @@ export function Navbar() {
                   <ChevronDown className="h-3 w-3" />
                 </button>
                 {menuOpen && (
-                  <div className="absolute right-0 mt-2 w-52 overflow-hidden rounded-md border border-[#E5E7EB] bg-white shadow-lg">
-                    <Link
-                      to="/account"
-                      onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#0B2E59] hover:bg-[#F5F7FA]"
-                    >
-                      <User className="h-3.5 w-3.5" /> My Profile
-                    </Link>
-                    <Link
-                      to="/account"
-                      onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#0B2E59] hover:bg-[#F5F7FA]"
-                    >
-                      <Inbox className="h-3.5 w-3.5" /> My Enquiries
-                    </Link>
+                  <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-[#E5E7EB] bg-white shadow-xl">
+                    <div className="border-b border-[#F1F2F4] bg-[#FAFBFD] px-3.5 py-2">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Logged in</p>
+                      <p className="truncate text-xs font-black text-[#0B2E59]">{customer.name}</p>
+                    </div>
+                    <div className="p-1">
+                      <Link
+                        to="/account"
+                        search={{ tab: "history" }}
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold text-[#0B2E59] hover:bg-[#F5F7FA]"
+                      >
+                        <History className="h-3.5 w-3.5 text-secondary" /> Service History
+                      </Link>
+                      <Link
+                        to="/account"
+                        search={{ tab: "requests" }}
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-[#0B2E59] hover:bg-[#F5F7FA]"
+                      >
+                        <Inbox className="h-3.5 w-3.5 text-muted-foreground" /> Active Requests
+                      </Link>
+                      <Link
+                        to="/account"
+                        search={{ tab: "profile" }}
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-[#0B2E59] hover:bg-[#F5F7FA]"
+                      >
+                        <User className="h-3.5 w-3.5 text-muted-foreground" /> My Profile
+                      </Link>
+                    </div>
                     <button
                       type="button"
                       onClick={() => { setMenuOpen(false); signOutCustomer(); }}
-                      className="flex w-full items-center gap-2 border-t border-[#E5E7EB] px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50"
+                      className="flex w-full items-center gap-2 border-t border-[#F1F2F4] px-3.5 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50"
                     >
                       <LogOut className="h-3.5 w-3.5" /> Logout
                     </button>
@@ -250,11 +266,21 @@ export function Navbar() {
                   <>
                     <Link
                       to="/account"
+                      search={{ tab: "history" }}
+                      onClick={() => setOpen(false)}
+                      className="inline-flex items-center gap-2 rounded-md border border-[#0B2E59] bg-[#0B2E59]/5 px-3 py-2 text-sm font-bold text-[#0B2E59]"
+                    >
+                      <History className="h-4 w-4 text-secondary" />
+                      Service History
+                    </Link>
+                    <Link
+                      to="/account"
+                      search={{ tab: "profile" }}
                       onClick={() => setOpen(false)}
                       className="inline-flex items-center gap-2 rounded-md border border-[#0B2E59] bg-white px-3 py-2 text-sm font-bold text-[#0B2E59]"
                     >
                       <User className="h-4 w-4" />
-                      My Account
+                      My Profile
                     </Link>
                     <button
                       type="button"
