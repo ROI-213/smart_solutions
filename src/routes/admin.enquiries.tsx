@@ -2,12 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
   Search, Eye, Trash2, Download, Phone, MessageCircle, CheckCircle2, Inbox,
-  Clock, Loader2, XCircle, FileText, X,
+  Clock, Loader2, XCircle, FileText, X, RefreshCw, Radio,
 } from "lucide-react";
 import { AdminShell } from "@/components/site/AdminShell";
 import {
   useEnquiriesStore, updateEnquiry, deleteEnquiry, addNote, downloadEnquiriesCSV,
-  ENQUIRY_STATUSES, assignEnquiryToAgent, type Enquiry, type EnquiryStatus,
+  ENQUIRY_STATUSES, assignEnquiryToAgent, syncBackendEnquiries, type Enquiry, type EnquiryStatus,
 } from "@/lib/enquiries-store";
 import { useAllAgents } from "@/lib/agents-store";
 import { SITE } from "@/lib/site";
@@ -31,7 +31,7 @@ const STAT_ICONS = {
 } as const;
 
 function EnquiriesPage() {
-  const { enquiries } = useEnquiriesStore();
+  const { enquiries, loading, refresh } = useEnquiriesStore();
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"All" | EnquiryStatus>("All");
   const [viewing, setViewing] = useState<Enquiry | null>(null);
@@ -85,6 +85,17 @@ function EnquiriesPage() {
           ))}
         </div>
         <button
+          type="button"
+          onClick={() => { void refresh(); }}
+          disabled={loading}
+          title="Refresh enquiries from Supabase backend"
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-bold text-foreground shadow-card transition-colors hover:bg-muted disabled:opacity-50"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin text-primary" : "text-emerald-500"}`} />
+          {loading ? "Syncing..." : "Sync Live"}
+        </button>
+        <button
+          type="button"
           onClick={() => downloadEnquiriesCSV(filtered)}
           className="inline-flex items-center gap-2 rounded-xl bg-gradient-accent px-4 py-2 text-xs font-bold text-accent-foreground shadow-card"
         >

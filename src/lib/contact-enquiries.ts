@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { addEnquiry, deleteEnquiry as deleteLocalEnquiry, getEnquiries, updateEnquiry, type Enquiry, type EnquiryStatus } from "@/lib/enquiries-store";
+import { addEnquiry, deleteEnquiry as deleteLocalEnquiry, getEnquiries, updateEnquiry, syncBackendEnquiries, type Enquiry, type EnquiryStatus } from "@/lib/enquiries-store";
 
 export const CONTACT_STATUSES = ["New", "In Progress", "Contacted", "Resolved", "Closed"] as const;
 export type ContactStatus = (typeof CONTACT_STATUSES)[number];
@@ -214,6 +214,13 @@ export async function submitContactEnquiry(input: ContactInput): Promise<Contact
   if (!phone) {
     throw new Error("Phone number is mandatory for submitting an enquiry.");
   }
+  const metadata = {
+    category: input.category?.trim() || "",
+    service: input.service?.trim() || "",
+    location: input.location?.trim() || "",
+    preferredDate: input.preferredDate || "",
+    source: "Contact Us",
+  };
   const payload = {
     full_name: input.fullName.trim(),
     phone,
@@ -221,6 +228,7 @@ export async function submitContactEnquiry(input: ContactInput): Promise<Contact
     subject: input.subject?.trim() || null,
     message: input.message.trim(),
     status: "new",
+    admin_notes: JSON.stringify(metadata),
   };
   try {
     const { data, error } = await supabase
@@ -235,6 +243,7 @@ export async function submitContactEnquiry(input: ContactInput): Promise<Contact
       }
       throw error;
     }
+    void syncBackendEnquiries().catch(() => {});
     return fromRow(data as Row);
   } catch (error) {
     if (isRecoverableBackendError(error)) {
