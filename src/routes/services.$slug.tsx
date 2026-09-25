@@ -428,22 +428,8 @@ function ServiceDetail({ service, catalog }: { service: PublicServiceCategory; c
         image={hero.image}
         icon={Icon}
         accentColor={hero.accent}
+        badgeText="SMART SOLUTIONS GROUPS"
       />
-
-      {/* Hero CTAs */}
-      <div className="mx-auto mt-6 flex max-w-7xl flex-wrap gap-3 px-4 sm:px-6">
-        <Button asChild size="lg" className="bg-[#061B55] font-bold text-white hover:bg-[#061B55]/90">
-          <a href="#enquiry"><Send className="mr-2 h-4 w-4" /> Book a Service</a>
-        </Button>
-        <Button asChild size="lg" className="bg-gradient-accent font-bold text-accent-foreground hover:opacity-90">
-          <a href={`tel:${SITE.contact.primary.phone}`}><Phone className="mr-2 h-4 w-4" /> Call Now</a>
-        </Button>
-        <Button asChild size="lg" className="bg-whatsapp font-bold text-whatsapp-foreground hover:opacity-90">
-          <a href={SITE.social.whatsapp} target="_blank" rel="noreferrer">
-            <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp Us
-          </a>
-        </Button>
-      </div>
 
       {/* Overview */}
       <section className="mx-auto max-w-5xl px-6 py-16 text-center">
