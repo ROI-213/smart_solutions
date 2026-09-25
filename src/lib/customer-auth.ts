@@ -151,6 +151,18 @@ export function signOutCustomer() {
   writeSession(null);
 }
 
+export function updateCurrentCustomerPhone(phone: string) {
+  const norm = normalizePhone(phone);
+  if (norm.length !== 10) return;
+  const current = readSession();
+  if (!current) return;
+  if (current.phone === norm) return;
+  const updated = { ...current, phone: norm };
+  const list = readUsers().map((u) => (u.id === current.id ? updated : u));
+  writeUsers(list);
+  writeSession(updated);
+}
+
 export function getCurrentCustomer(): Customer | null {
   return readSession();
 }

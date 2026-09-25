@@ -210,9 +210,13 @@ export type ContactInput = {
 };
 
 export async function submitContactEnquiry(input: ContactInput): Promise<ContactEnquiry> {
+  const phone = input.phone?.trim();
+  if (!phone) {
+    throw new Error("Phone number is mandatory for submitting an enquiry.");
+  }
   const payload = {
     full_name: input.fullName.trim(),
-    phone: input.phone.trim(),
+    phone,
     email: input.email?.trim() || null,
     subject: input.subject?.trim() || null,
     message: input.message.trim(),

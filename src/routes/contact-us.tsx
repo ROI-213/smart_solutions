@@ -9,7 +9,7 @@ import { SITE } from "@/lib/site";
 import type { EnquiryAgreement } from "@/lib/enquiries-store";
 import { useSocialLinks, SOCIAL_ICONS } from "@/lib/settings-store";
 import { AgreementConsent } from "@/components/site/AgreementConsent";
-import { useCustomerAuth } from "@/lib/customer-auth";
+import { useCustomerAuth, updateCurrentCustomerPhone } from "@/lib/customer-auth";
 import { CustomerAuthDialog } from "@/components/site/CustomerAuthDialog";
 import { usePublicServicesCatalog } from "@/lib/public-services";
 import {
@@ -130,7 +130,7 @@ function ContactUs() {
             if (submitting) return;
             const fd = new FormData(e.currentTarget);
             const name = String(fd.get("name") || "");
-            const phoneVal = String(fd.get("phone") || "");
+            const phoneVal = String(fd.get("phone") || phone || customer?.phone || "").trim();
             const emailVal = String(fd.get("email") || "");
             const categoryVal = String(fd.get("category") || "");
             const serviceVal = String(fd.get("service") || "");
@@ -156,9 +156,12 @@ function ContactUs() {
             setSubmitError(null);
             try {
               await submitContactEnquiry(input);
+              if (customer && !customer.phone && phoneVal) {
+                updateCurrentCustomerPhone(phoneVal);
+              }
               setSent(true);
               formRef.current?.reset();
-              setPhone(customer?.phone ?? "");
+              setPhone(customer?.phone || phoneVal);
               setAgreement(null);
               setCategory("");
               setErrors({});
@@ -179,7 +182,22 @@ function ContactUs() {
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <Field label={fs.nameLabel} required error={errors.fullName}><input name="name" required type="text" className="input" placeholder={fs.namePlaceholder} maxLength={100} defaultValue={customer?.name ?? ""} /></Field>
-            <Field label={fs.phoneLabel} required error={errors.phone}><input name="phone" required type="tel" className="input" placeholder={fs.phonePlaceholder} maxLength={15} value={phone} onChange={(e) => setPhone(e.target.value)} readOnly={Boolean(customer)} /></Field>
+            <Field label={fs.phoneLabel} required error={errors.phone}>
+              <input
+                name="phone"
+                required
+                type="tel"
+                className="input"
+                placeholder={fs.phonePlaceholder || "10-digit mobile number"}
+                maxLength={15}
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
+                }}
+                readOnly={Boolean(customer && customer.phone)}
+              />
+            </Field>
             <Field label={fs.emailLabel} error={errors.email}><input name="email" type="email" className="input" placeholder={fs.emailPlaceholder} maxLength={255} defaultValue={customer?.email ?? ""} readOnly={Boolean(customer)} /></Field>
             <Field label={fs.categoryLabel}>
               <select

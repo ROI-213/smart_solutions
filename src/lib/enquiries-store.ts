@@ -148,6 +148,9 @@ export type EnquiryInput = Omit<Enquiry, "id" | "status" | "notes" | "createdAt"
 };
 
 export function addEnquiry(input: EnquiryInput): Enquiry {
+  if (!input.phone || !input.phone.trim()) {
+    throw new Error("Phone number is mandatory for submitting an enquiry.");
+  }
   ensureSeeded();
   const list = read();
   const { syncBackend = true, ...enquiryInput } = input;

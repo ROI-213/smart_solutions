@@ -61,7 +61,7 @@ import { slugifyItem } from "@/data/services";
 import { SERVICE_ITEM_IMAGES, resolveServiceImage } from "@/data/service-item-images";
 import { AgreementConsent } from "@/components/site/AgreementConsent";
 import type { EnquiryAgreement } from "@/lib/enquiries-store";
-import { useCustomerAuth } from "@/lib/customer-auth";
+import { useCustomerAuth, updateCurrentCustomerPhone } from "@/lib/customer-auth";
 import { CustomerAuthDialog } from "@/components/site/CustomerAuthDialog";
 import { usePublicServicesCatalog } from "@/lib/public-services";
 
@@ -1560,6 +1560,7 @@ function FinalCTA({ selectedService }: { selectedService: string }) {
 function QuickEnquiry({ selectedService }: { selectedService: string }) {
   const [sent, setSent] = useState(false);
   const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [service, setService] = useState(selectedService);
   const [agreement, setAgreement] = useState<EnquiryAgreement | null>(null);
   const { customer, ready } = useCustomerAuth();
@@ -1578,10 +1579,21 @@ function QuickEnquiry({ selectedService }: { selectedService: string }) {
         if (!customer) { setAuthOpen(true); return; }
         if (!agreement) return;
         const fd = new FormData(e.currentTarget);
+        const rawPhone = String(fd.get("phone") || phone || customer.phone || "").trim();
+        const cleanPhone = rawPhone.replace(/[\s-]/g, "");
+        if (!cleanPhone) {
+          setPhoneError("Phone number is required.");
+          return;
+        }
+        if (!/^(?:\+?91[-\s]?)?[6-9]\d{9}$/.test(cleanPhone)) {
+          setPhoneError("Enter a valid 10-digit Indian mobile number.");
+          return;
+        }
+        setPhoneError("");
         void import("@/lib/enquiries-store").then(({ addEnquiry }) =>
           addEnquiry({
             name: String(fd.get("name") || customer.name),
-            phone: String(fd.get("phone") || customer.phone),
+            phone: cleanPhone,
             email: customer.email,
             category: "",
             service: String(fd.get("service") || ""),
@@ -1593,9 +1605,12 @@ function QuickEnquiry({ selectedService }: { selectedService: string }) {
             customerId: customer.id,
           }),
         );
+        if (customer && !customer.phone && cleanPhone) {
+          updateCurrentCustomerPhone(cleanPhone);
+        }
         setSent(true);
         (e.currentTarget as HTMLFormElement).reset();
-        setPhone(customer?.phone ?? "");
+        setPhone(customer?.phone || cleanPhone);
         setService("");
         setAgreement(null);
       }}
@@ -1611,8 +1626,25 @@ function QuickEnquiry({ selectedService }: { selectedService: string }) {
           <input id="qe-name" name="name" required maxLength={100} type="text" placeholder="Your name" defaultValue={customer?.name ?? ""} className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm outline-none focus:border-primary-glow focus:ring-2 focus:ring-primary-glow/20" />
         </div>
         <div className="flex w-full flex-col gap-1">
-          <label htmlFor="qe-phone" className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Phone Number</label>
-          <input id="qe-phone" name="phone" required maxLength={15} type="tel" placeholder="Phone number" value={phone} onChange={(e) => setPhone(e.target.value)} readOnly={Boolean(customer)} className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm outline-none focus:border-primary-glow focus:ring-2 focus:ring-primary-glow/20" />
+          <label htmlFor="qe-phone" className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Phone Number <span className="text-destructive font-bold">*</span>
+          </label>
+          <input
+            id="qe-phone"
+            name="phone"
+            required
+            maxLength={15}
+            type="tel"
+            placeholder="10-digit mobile number"
+            value={phone}
+            onChange={(e) => {
+              setPhone(e.target.value);
+              if (phoneError) setPhoneError("");
+            }}
+            readOnly={Boolean(customer && customer.phone)}
+            className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm outline-none focus:border-primary-glow focus:ring-2 focus:ring-primary-glow/20"
+          />
+          {phoneError && <p className="text-xs font-semibold text-destructive">{phoneError}</p>}
         </div>
         <div className="flex w-full flex-col gap-1">
           <label htmlFor="qe-service" className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Service Needed</label>

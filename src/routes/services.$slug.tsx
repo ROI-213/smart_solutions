@@ -18,7 +18,7 @@ import { findService, findServiceItem, slugifyItem } from "@/data/services";
 import { findServiceAlias } from "@/data/service-aliases";
 import { SITE } from "@/lib/site";
 import { AgreementConsent } from "@/components/site/AgreementConsent";
-import { useCustomerAuth } from "@/lib/customer-auth";
+import { useCustomerAuth, updateCurrentCustomerPhone } from "@/lib/customer-auth";
 import { CustomerAuthDialog } from "@/components/site/CustomerAuthDialog";
 import { SERVICE_ITEM_IMAGES, resolveServiceImage } from "@/data/service-item-images";
 import { ServiceHero } from "@/components/site/ServiceHero";
@@ -148,7 +148,11 @@ const serviceIconByName = servicesData.reduce<Record<string, LucideIcon>>((acc, 
 
 const enquirySchema = z.object({
   name: z.string().trim().min(2, "Enter your name").max(100),
-  phone: z.string().trim().regex(/^[0-9+\-\s()]{7,15}$/, "Enter a valid phone number"),
+  phone: z
+    .string()
+    .trim()
+    .min(1, "Phone number is required")
+    .regex(/^(?:\+?91[-\s]?)?[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
   email: z.string().trim().email("Enter a valid email").max(255),
   service: z.string().trim().min(2).max(120),
   location: z.string().trim().min(2, "Enter your location").max(150),
@@ -173,6 +177,7 @@ function EnquiryForm({ categoryTitle }: { categoryTitle: string }) {
     }
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form));
+    data.phone = String(data.phone || phone || customer?.phone || "").trim().replace(/[\s-]/g, "");
     const parsed = enquirySchema.safeParse(data);
     if (!parsed.success) {
       const fe: Record<string, string> = {};
@@ -198,10 +203,13 @@ function EnquiryForm({ categoryTitle }: { categoryTitle: string }) {
         customerId: customer.id,
       }),
     );
+    if (customer && !customer.phone && v.phone) {
+      updateCurrentCustomerPhone(v.phone);
+    }
     setTimeout(() => {
       setSubmitting(false);
       form.reset();
-      setPhone(customer?.phone ?? "");
+      setPhone(customer?.phone || v.phone);
       setAgreement(null);
       toast.success("Enquiry submitted — our team will call you shortly.");
     }, 600);
@@ -215,8 +223,23 @@ function EnquiryForm({ categoryTitle }: { categoryTitle: string }) {
         {errors.name && <p className="mt-1 text-xs text-destructive">{errors.name}</p>}
       </div>
       <div>
-        <Label htmlFor="phone">Phone</Label>
-        <Input id="phone" name="phone" type="tel" maxLength={15} required value={phone} onChange={(e) => setPhone(e.target.value)} readOnly={Boolean(customer)} />
+        <Label htmlFor="phone">
+          Phone <span className="text-destructive font-bold">*</span>
+        </Label>
+        <Input
+          id="phone"
+          name="phone"
+          type="tel"
+          maxLength={15}
+          required
+          placeholder="10-digit mobile number"
+          value={phone}
+          onChange={(e) => {
+            setPhone(e.target.value);
+            if (errors.phone) setErrors((prev) => ({ ...prev, phone: "" }));
+          }}
+          readOnly={Boolean(customer && customer.phone)}
+        />
         {errors.phone && <p className="mt-1 text-xs text-destructive">{errors.phone}</p>}
       </div>
       <div className="sm:col-span-2">
