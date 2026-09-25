@@ -261,7 +261,14 @@ function CareersPage() {
   };
 
   const reset = () => {
-    window.location.reload();
+    setReference(null);
+    setStep(0);
+    setSubmitting(false);
+    setError("");
+    setUploadStatus("");
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   if (reference) {
@@ -283,7 +290,11 @@ function CareersPage() {
             <Link to="/" className="inline-flex items-center gap-2 rounded-full bg-[#0B2E59] px-6 py-3 text-sm font-bold text-white hover:bg-[#0B2E59]/90">
               Return to Home
             </Link>
-            <button onClick={reset} className="inline-flex items-center gap-2 rounded-full border border-[#0B2E59] bg-white px-6 py-3 text-sm font-bold text-[#0B2E59] hover:bg-[#F5F7FA]">
+            <button
+              type="button"
+              onClick={reset}
+              className="inline-flex items-center gap-2 rounded-full border border-[#0B2E59] bg-white px-6 py-3 text-sm font-bold text-[#0B2E59] hover:bg-[#F5F7FA]"
+            >
               Submit Another Application
             </button>
           </div>
@@ -921,7 +932,7 @@ function TermsModal({ onClose, onAccept }: { onClose: () => void; onAccept: () =
       <div className="max-h-[85vh] w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-[#E5E7EB] px-5 py-4">
           <h3 className="text-lg font-black text-[#0B2E59]">Privacy Policy & Terms and Conditions</h3>
-          <button onClick={onClose} className="rounded-full p-1 text-[#0B2E59]/60 hover:bg-[#F5F7FA]"><X className="h-4 w-4" /></button>
+          <button type="button" onClick={onClose} className="rounded-full p-1 text-[#0B2E59]/60 hover:bg-[#F5F7FA]"><X className="h-4 w-4" /></button>
         </div>
         <div className="max-h-[60vh] space-y-3 overflow-y-auto px-5 py-4 text-sm text-[#0B2E59]/80">
           <p>By submitting this application, you agree that Smart Solutions Groups may collect, process and store your personal data and uploaded documents for the sole purpose of evaluating your candidature.</p>
@@ -932,8 +943,8 @@ function TermsModal({ onClose, onAccept }: { onClose: () => void; onAccept: () =
           <p>Only shortlisted candidates will be contacted. Interview participation does not guarantee an offer of employment.</p>
         </div>
         <div className="flex justify-end gap-3 border-t border-[#E5E7EB] bg-[#FAFBFD] px-5 py-4">
-          <button onClick={onClose} className="rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-bold text-[#0B2E59]">Close</button>
-          <button onClick={onAccept} className="rounded-full bg-[#0B2E59] px-5 py-2 text-sm font-bold text-white hover:bg-[#0B2E59]/90">Accept & Continue</button>
+          <button type="button" onClick={onClose} className="rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-bold text-[#0B2E59]">Close</button>
+          <button type="button" onClick={onAccept} className="rounded-full bg-[#0B2E59] px-5 py-2 text-sm font-bold text-white hover:bg-[#0B2E59]/90">Accept & Continue</button>
         </div>
       </div>
     </div>

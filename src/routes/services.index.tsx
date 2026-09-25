@@ -56,6 +56,7 @@ function ServicesIndex() {
               const isActive = active === f.id;
               return (
                 <button
+                  type="button"
                   key={f.id}
                   onClick={() => setActive(f.id)}
                   className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${

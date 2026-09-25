@@ -11,7 +11,10 @@
   # 2. Prevent rewriting missing asset files to HTML (prevents MIME type mismatch errors)
   RewriteRule ^assets/.*$ - [R=404,L]
 
-  # 3. Proxy or rewrite remaining requests to index.html or Node server
+  # 3. If index.html exists on disk, serve it (static fallback)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{DOCUMENT_ROOT}/index.html -f
   RewriteRule ^ index.html [L]
 </IfModule>
 

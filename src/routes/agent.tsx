@@ -64,6 +64,7 @@ function AgentAuthScreen() {
             {(["login", "otp", "register"] as const).map((k) => (
               <button
                 key={k}
+                type="button"
                 onClick={() => setMode(k)}
                 className={`rounded-full px-3 py-2 text-[11px] font-bold transition ${
                   mode === k ? "bg-primary text-primary-foreground shadow-card" : "text-muted-foreground"
@@ -336,7 +337,7 @@ function AgentRegisterForm({ onDone }: { onDone: () => void }) {
         <p className="mt-1 text-sm text-muted-foreground">
           Your Registered Service Partner / Technician registration has been submitted successfully. Our team will verify your details and contact you soon.
         </p>
-        <button onClick={onDone} className="mt-4 rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground">Go to Login</button>
+        <button type="button" onClick={onDone} className="mt-4 rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground">Go to Login</button>
       </div>
     );
   }

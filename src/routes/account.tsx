@@ -42,7 +42,7 @@ function AccountPage() {
       <SiteLayout>
         <PageHeader eyebrow="My Account" title="Login to view your requests" subtitle="Sign in or create an account to submit and track your service requests." />
         <section className="mx-auto max-w-3xl px-6 py-16 text-center">
-          <button onClick={() => setAuthOpen(true)} className="rounded-full bg-gradient-accent px-6 py-3 text-sm font-bold text-accent-foreground shadow-card">
+          <button type="button" onClick={() => setAuthOpen(true)} className="rounded-full bg-gradient-accent px-6 py-3 text-sm font-bold text-accent-foreground shadow-card">
             Login / Sign up
           </button>
         </section>
@@ -72,6 +72,7 @@ function AccountPage() {
             OTP verified · Joined {new Date(customer.createdAt).toLocaleDateString()}
           </div>
           <button
+            type="button"
             onClick={() => { signOutCustomer(); navigate({ to: "/" }); }}
             className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-border py-2.5 text-xs font-bold text-destructive hover:bg-destructive/10"
           >

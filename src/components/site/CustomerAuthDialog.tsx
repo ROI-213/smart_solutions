@@ -31,7 +31,7 @@ export function CustomerAuthDialog({
               <h2 className="text-lg font-black text-primary">Login to your account</h2>
             </div>
           </div>
-          <button onClick={onClose} aria-label="Close" className="rounded-md p-1.5 text-muted-foreground hover:bg-muted">
+          <button type="button" onClick={onClose} aria-label="Close" className="rounded-md p-1.5 text-muted-foreground hover:bg-muted">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -116,6 +116,7 @@ function LoginPanel({ initialEmail = "", onDone }: { initialEmail?: string; onDo
       )}
       {!sent ? (
         <button
+          type="button"
           onClick={send}
           disabled={loading || !valid}
           className="w-full rounded-full bg-gradient-accent py-2.5 text-sm font-bold text-accent-foreground shadow-card disabled:opacity-50"
@@ -132,6 +133,7 @@ function LoginPanel({ initialEmail = "", onDone }: { initialEmail?: string; onDo
           />
           <div className="flex gap-2">
             <button
+              type="button"
               onClick={verify}
               disabled={loading || input.trim().length !== 6}
               className="flex-1 rounded-full bg-primary py-2.5 text-sm font-bold text-primary-foreground disabled:opacity-50"
@@ -139,6 +141,7 @@ function LoginPanel({ initialEmail = "", onDone }: { initialEmail?: string; onDo
               {loading ? "Verifying..." : "Verify & Login"}
             </button>
             <button
+              type="button"
               onClick={send}
               disabled={loading}
               className="rounded-full border border-border px-4 py-2.5 text-xs font-semibold text-muted-foreground hover:bg-muted disabled:opacity-50"

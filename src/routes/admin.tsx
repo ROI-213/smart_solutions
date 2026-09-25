@@ -81,6 +81,7 @@ function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
               to send real reset emails, or contact your developer.
             </p>
             <button
+              type="button"
               onClick={() => setForgot(false)}
               className="w-full rounded-full border border-border py-2.5 text-sm font-semibold hover:bg-muted"
             >

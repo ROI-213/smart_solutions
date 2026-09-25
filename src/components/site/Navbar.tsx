@@ -130,6 +130,7 @@ export function Navbar() {
             {/* Customer Login / My Account */}
             {!customer ? (
               <button
+                type="button"
                 onClick={() => setAuthOpen(true)}
                 className="ml-2 hidden shrink-0 items-center gap-1.5 rounded-md border border-[#0B2E59] bg-white px-2 py-1.5 text-[11px] font-bold text-[#0B2E59] transition-colors hover:border-[#D4AF37] hover:bg-[#D4AF37] hover:text-white sm:inline-flex"
               >
@@ -139,6 +140,7 @@ export function Navbar() {
             ) : (
               <div className="relative ml-2 hidden shrink-0 sm:inline-block">
                 <button
+                  type="button"
                   onClick={() => setMenuOpen((v) => !v)}
                   className="inline-flex items-center gap-1.5 rounded-md border border-[#0B2E59] bg-white px-2 py-1.5 text-[11px] font-bold text-[#0B2E59] transition-colors hover:border-[#D4AF37] lg:px-3 lg:py-2 lg:text-xs"
                 >
@@ -163,6 +165,7 @@ export function Navbar() {
                       <Inbox className="h-3.5 w-3.5" /> My Enquiries
                     </Link>
                     <button
+                      type="button"
                       onClick={() => { setMenuOpen(false); signOutCustomer(); }}
                       className="flex w-full items-center gap-2 border-t border-[#E5E7EB] px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50"
                     >
@@ -208,6 +211,7 @@ export function Navbar() {
               </button>
             )}
             <button
+              type="button"
               onClick={() => setOpen((v) => !v)}
               aria-label="Toggle menu"
               className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-[#0B2E59] xl:hidden"
@@ -235,6 +239,7 @@ export function Navbar() {
                 ))}
                 {!customer ? (
                   <button
+                    type="button"
                     onClick={() => { setOpen(false); setAuthOpen(true); }}
                     className="inline-flex items-center gap-2 rounded-md border border-[#0B2E59] bg-white px-3 py-2 text-sm font-bold text-[#0B2E59]"
                   >
@@ -252,6 +257,7 @@ export function Navbar() {
                       My Account
                     </Link>
                     <button
+                      type="button"
                       onClick={() => { setOpen(false); signOutCustomer(); }}
                       className="inline-flex items-center gap-2 rounded-md border border-rose-300 bg-white px-3 py-2 text-sm font-bold text-rose-600"
                     >
